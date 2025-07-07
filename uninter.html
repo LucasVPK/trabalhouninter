@@ -1,0 +1,1290 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Protótipo - VidaPlus</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .background-gradient {
+            background: linear-gradient(135deg, #0a2a43, #0d3b66, #145b9b);
+            background-size: 400% 400%;
+            animation: gradientAnimation 15s ease infinite;
+        }
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .main-btn {
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+        }
+        .main-btn:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+        .form-input {
+            background-color: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .form-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        .screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            min-height: 100vh;
+            padding: 1rem;
+        }
+        .screen.active {
+            display: flex;
+        }
+        .modal {
+            display: none;
+        }
+        .modal.active {
+            display: flex;
+        }
+        .content-card {
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            width: 100%;
+        }
+        .table-header {
+            background-color: rgba(0, 0, 0, 0.3);
+        }
+        .table-row:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+        .tab-btn.active {
+            background-color: rgba(20, 91, 155, 0.7);
+            border-bottom: 2px solid #38bdf8;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body class="background-gradient text-white">
+
+    <div id="app-container" class="w-full">
+
+        <!-- TELA 1: SELEÇÃO DE PERFIL -->
+        <div id="selection-screen" class="screen active max-w-sm text-center mx-auto">
+            <div class="w-full">
+                <div class="flex justify-center items-center mb-10">
+                    <svg class="w-12 h-12 mr-3 text-cyan-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                    <h1 class="text-4xl font-bold tracking-wider">VidaPlus</h1>
+                </div>
+                <p class="mb-8 text-lg text-gray-300">Atendimento para:</p>
+                <div class="space-y-4">
+                    <button onclick="selectProfile('profissional')" class="main-btn w-full py-4 rounded-lg text-lg font-semibold">Profissional da Saúde</button>
+                    <button onclick="selectProfile('paciente')" class="main-btn w-full py-4 rounded-lg text-lg font-semibold">Paciente</button>
+                    <button onclick="selectProfile('admin')" class="main-btn w-full py-4 rounded-lg text-lg font-semibold">Administrativo</button>
+                </div>
+                 <p class="text-gray-500 text-sm mt-12">v3.9</p>
+            </div>
+        </div>
+
+        <!-- TELA 2: LOGIN -->
+        <div id="login-screen" class="screen max-w-sm mx-auto">
+            <div class="w-full">
+                <div class="flex justify-center items-center mb-10">
+                    <svg class="w-10 h-10 mr-3 text-cyan-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                    <h1 class="text-3xl font-bold tracking-wider">VidaPlus</h1>
+                </div>
+                <h2 class="text-2xl font-semibold mb-6 text-center">Login</h2>
+                <form id="login-form" class="space-y-4">
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"></path></svg>
+                        </span>
+                        <input type="email" id="login-email" placeholder="E-mail" class="form-input w-full p-3 pl-10 rounded-lg" required>
+                    </div>
+                    <div class="relative">
+                         <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                        </span>
+                        <input type="password" id="login-password" placeholder="Senha" class="form-input w-full p-3 pl-10 rounded-lg" required>
+                    </div>
+                    <div class="flex justify-between items-center text-sm">
+                        <label class="flex items-center text-gray-300"><input type="checkbox" class="mr-2 h-4 w-4 rounded bg-gray-700 border-gray-600 focus:ring-cyan-500">Lembrar usuário</label>
+                        <a href="#" class="text-gray-400 hover:text-white">Esqueci minha senha</a>
+                    </div>
+                    <button type="submit" class="main-btn w-full py-3 rounded-lg text-lg font-bold bg-cyan-500 hover:bg-cyan-600 border-none">LOGIN</button>
+                </form>
+                <div class="mt-6 text-center">
+                    <a href="#" onclick="showScreen('register-screen')" class="text-gray-300 hover:text-white">Primeiro acesso? <span class="font-semibold text-cyan-300">Cadastre-se</span></a>
+                </div>
+                 <button onclick="showScreen('selection-screen')" class="text-gray-400 hover:text-white mt-8 w-full text-center">← Voltar para seleção de perfil</button>
+            </div>
+        </div>
+
+        <!-- TELA 3: CADASTRO -->
+        <div id="register-screen" class="screen max-w-2xl mx-auto">
+             <div class="content-card">
+                <h2 class="text-3xl font-bold mb-6 text-center">Cadastro</h2>
+                <form id="register-form" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <input type="text" placeholder="Nome completo" class="form-input p-3 rounded-lg md:col-span-2" required>
+                    <input type="text" id="crm-field" placeholder="CRM" class="form-input p-3 rounded-lg">
+                    <input type="text" id="cpf-field" placeholder="CPF" class="form-input p-3 rounded-lg" required maxlength="14">
+                    <input type="text" placeholder="RG" class="form-input p-3 rounded-lg">
+                    <input type="text" onfocus="(this.type='date')" onblur="(this.type='text')" placeholder="Data Nascimento" class="form-input p-3 rounded-lg">
+                    <input type="text" placeholder="Estado Civil" class="form-input p-3 rounded-lg">
+                    <input type="text" placeholder="Endereço" class="form-input p-3 rounded-lg md:col-span-2">
+                    <input type="text" placeholder="CEP" class="form-input p-3 rounded-lg">
+                    <input type="text" placeholder="Complemento" class="form-input p-3 rounded-lg">
+                    <input type="text" placeholder="Telefone" class="form-input p-3 rounded-lg">
+                    <input type="text" placeholder="Celular" class="form-input p-3 rounded-lg">
+                    <input type="email" placeholder="E-mail" class="form-input p-3 rounded-lg md:col-span-2" required>
+                    <input type="password" placeholder="Senha" class="form-input p-3 rounded-lg" required>
+                    <input type="password" placeholder="Confirmar Senha" class="form-input p-3 rounded-lg" required>
+                    <p class="text-xs text-gray-400 md:col-span-2">Todos os campos são obrigatórios*</p>
+                    <button type="submit" class="main-btn w-full py-3 rounded-lg text-lg font-bold bg-cyan-500 hover:bg-cyan-600 border-none md:col-span-2">CADASTRAR</button>
+                </form>
+                <button onclick="showScreen('login-screen')" class="text-gray-400 hover:text-white mt-6 w-full text-center">← Voltar para o Login</button>
+            </div>
+        </div>
+        
+        <!-- TELA 4: CONFIRMAÇÃO DE CADASTRO -->
+        <div id="confirmation-screen" class="screen max-w-sm text-center mx-auto">
+            <div class="bg-black bg-opacity-30 p-10 rounded-2xl">
+                <svg class="w-24 h-24 mx-auto text-green-400 mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <h2 class="text-2xl font-bold">Cadastro efetuado com sucesso!</h2>
+                <button onclick="showScreen('login-screen')" class="main-btn mt-8 w-full py-3 rounded-lg text-lg font-semibold">Ir para Login</button>
+            </div>
+        </div>
+
+        <!-- TELA 5: DASHBOARD PROFISSIONAL -->
+        <div id="dashboard-profissional" class="screen max-w-4xl mx-auto">
+            <div class="content-card">
+                <header class="flex justify-between items-center mb-6 pb-4 border-b border-gray-700">
+                    <div>
+                        <h2 class="text-2xl font-bold">Dra. Catia Simone</h2>
+                        <p class="text-gray-400">CRM #21555</p>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <button onclick="showScreen('selection-screen')" class="text-gray-400 hover:text-white">Sair</button>
+                         <svg class="w-6 h-6 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                    </div>
+                </header>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+                    <button onclick="showScreen('consultas-profissional-screen', 'dashboard-profissional')" class="main-btn p-4 rounded-lg text-center">Consultas</button>
+                    <button onclick="showScreen('agendamentos-profissional-screen', 'dashboard-profissional')" class="main-btn p-4 rounded-lg text-center">Agenda</button>
+                    <button onclick="showScreen('prontuario-screen', 'dashboard-profissional')" class="main-btn p-4 rounded-lg text-center">Prontuário</button>
+                    <button onclick="showScreen('exames-screen', 'dashboard-profissional')" class="main-btn p-4 rounded-lg text-center">Exames</button>
+                    <button onclick="showScreen('laudos-screen', 'dashboard-profissional')" class="main-btn p-4 rounded-lg text-center">Laudos</button>
+                    <button onclick="showScreen('cirurgias-screen', 'dashboard-profissional')" class="main-btn p-4 rounded-lg text-center">Cirurgias</button>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-black bg-opacity-25 p-4 rounded-lg">
+                        <h3 class="font-bold mb-3">Plano de Cuidados - Pendências</h3>
+                        <ul class="space-y-2 text-sm text-gray-300">
+                            <li><span class="text-cyan-400">*</span> Revisar medicação de Alice Pereira</li>
+                            <li><span class="text-cyan-400">*</span> Analisar resultado de imagem de João da Silva</li>
+                            <li><span class="text-cyan-400">*</span> Agendar retorno para Mariana Costa</li>
+                        </ul>
+                    </div>
+                    <div class="bg-black bg-opacity-25 p-4 rounded-lg">
+                        <h3 class="font-bold mb-3">LEITOS / URGÊNCIAS</h3>
+                         <ul class="space-y-2 text-sm text-gray-300">
+                            <li>Leito 72 / Quarto 34</li>
+                            <li>Leito 49 / Quarto 22</li>
+                            <li class="text-red-400 font-semibold">Urgência Paciente #15001</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- TELA 6: DASHBOARD PACIENTE -->
+        <div id="dashboard-paciente" class="screen max-w-4xl mx-auto">
+            <div class="content-card">
+                <header class="flex justify-between items-center mb-6 pb-4 border-b border-gray-700">
+                    <div>
+                        <h2 class="text-2xl font-bold">Alice Pereira</h2>
+                        <p class="text-gray-400">Paciente #15001</p>
+                    </div>
+                     <div class="flex items-center space-x-4">
+                        <button onclick="showScreen('selection-screen')" class="text-gray-400 hover:text-white">Sair</button>
+                         <svg class="w-6 h-6 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                    </div>
+                </header>
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
+                    <button onclick="showScreen('exames-screen', 'dashboard-paciente')" class="main-btn p-2 rounded-lg text-center flex items-center justify-center h-full">Exames</button>
+                    <button onclick="showScreen('video-chamada-screen', 'dashboard-paciente')" class="main-btn p-2 rounded-lg text-center flex items-center justify-center h-full">Vídeo Chamada</button>
+                    <button onclick="showScreen('consultas-paciente-screen', 'dashboard-paciente')" class="main-btn p-2 rounded-lg text-center flex items-center justify-center h-full">Consultas</button>
+                    <button onclick="showScreen('receitas-screen', 'dashboard-paciente')" class="main-btn p-2 rounded-lg text-center flex items-center justify-center h-full">Receitas</button>
+                    <button onclick="showScreen('agendamentos-paciente-screen', 'dashboard-paciente')" class="main-btn p-2 rounded-lg text-center flex items-center justify-center h-full">Agendamentos</button>
+                    <button onclick="showScreen('historico-screen', 'dashboard-paciente')" class="main-btn p-2 rounded-lg text-center flex items-center justify-center h-full">Histórico</button>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-black bg-opacity-25 p-4 rounded-lg">
+                        <h3 class="font-bold mb-3">Meu Plano de Cuidados</h3>
+                        <ul class="space-y-2 text-sm text-gray-300">
+                            <li><span class="text-cyan-400">*</span> Próxima consulta: Cardiologista (22/07)</li>
+                            <li><span class="text-cyan-400">*</span> Tomar Amoxicilina - 2x ao dia</li>
+                            <li><span class="text-cyan-400">*</span> Realizar exame de sangue em jejum.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-black bg-opacity-25 p-4 rounded-lg">
+                        <h3 class="font-bold mb-3">FILA DE ATENDIMENTO</h3>
+                        <p class="text-gray-300">Senha: <span class="font-bold text-white">C-303</span></p>
+                        <div class="mt-2 bg-red-500 text-white font-bold p-2 rounded-lg text-center">
+                            URGÊNCIA: VERMELHO
+                        </div>
+                        <p class="mt-3 text-gray-300">Tempo de Espera: <span class="font-bold text-white">00:20 min</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- TELA 7: DASHBOARD ADMIN -->
+        <div id="dashboard-admin" class="screen max-w-4xl mx-auto">
+            <div class="content-card">
+                <header class="flex justify-between items-center mb-6 pb-4 border-b border-gray-700">
+                    <div>
+                        <h2 class="text-2xl font-bold">Administração da Instituição</h2>
+                        <p class="text-gray-400">VidaPlus</p>
+                    </div>
+                     <div class="flex items-center space-x-4">
+                        <button onclick="showScreen('selection-screen')" class="text-gray-400 hover:text-white">Sair</button>
+                         <svg class="w-6 h-6 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                    </div>
+                </header>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-black bg-opacity-25 p-4 rounded-lg">
+                        <h3 class="font-bold mb-3">GERENCIAR</h3>
+                        <ul class="space-y-2">
+                           <li><button onclick="showScreen('cadastros-admin-screen', 'dashboard-admin')" class="main-btn p-2 rounded-lg text-center w-full">Cadastros</button></li>
+                           <li><button onclick="showScreen('relatorios-admin-screen', 'dashboard-admin')" class="main-btn p-2 rounded-lg text-center w-full">Relatórios</button></li>
+                           <li><button onclick="showScreen('leitos-admin-screen', 'dashboard-admin')" class="main-btn p-2 rounded-lg text-center w-full">Leitos</button></li>
+                           <li><button onclick="showScreen('atendimentos-admin-screen', 'dashboard-admin')" class="main-btn p-2 rounded-lg text-center w-full">Atendimentos</button></li>
+                        </ul>
+                    </div>
+                    <div class="bg-black bg-opacity-25 p-4 rounded-lg">
+                        <h3 class="font-bold mb-3">FINANCEIRO</h3>
+                        <ul class="space-y-2">
+                           <li><button onclick="showScreen('suprimentos-admin-screen', 'dashboard-admin')" class="main-btn p-2 rounded-lg text-center w-full">Suprimentos</button></li>
+                           <li><button onclick="showScreen('equipamentos-admin-screen', 'dashboard-admin')" class="main-btn p-2 rounded-lg text-center w-full">Equipamentos</button></li>
+                           <li><button onclick="showScreen('patrimonio-admin-screen', 'dashboard-admin')" class="main-btn p-2 rounded-lg text-center w-full">Patrimônio</button></li>
+                           <li><button onclick="showScreen('faturamento-admin-screen', 'dashboard-admin')" class="main-btn p-2 rounded-lg text-center w-full">Faturamento</button></li>
+                        </ul>
+                    </div>
+                    <div class="bg-black bg-opacity-25 p-4 rounded-lg">
+                        <h3 class="font-bold mb-3">REQUISIÇÕES</h3>
+                        <ul class="space-y-2 text-sm text-gray-300">
+                            <li class="flex justify-between"><span>Aventais</span> <span class="font-mono">24 - 09/06</span></li>
+                            <li class="flex justify-between"><span>Frascos de Coleta</span> <span class="font-mono">11 - 15/06</span></li>
+                            <li class="flex justify-between"><span>Anti-inflamatórios</span> <span class="font-mono">6 - 28/06</span></li>
+                            <li class="flex justify-between"><span>Luvas Descartáveis</span> <span class="font-mono">50 - 01/07</span></li>
+                            <li class="flex justify-between"><span>Papel A4</span> <span class="font-mono">5 - 01/07</span></li>
+                            <li class="flex justify-between"><span>Soro Fisiológico</span> <span class="font-mono">100 - 02/07</span></li>
+                            <li class="flex justify-between"><span>Toners para Impressora</span> <span class="font-mono">10 - 02/07</span></li>
+                            <li class="flex justify-between"><span>Gaze Estéril</span> <span class="font-mono">200 - 03/07</span></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ================================================== -->
+        <!-- TELAS DE CONTEÚDO PARA OS ATALHOS -->
+        <!-- ================================================== -->
+
+        <!-- Tela de Exames -->
+        <div id="exames-screen" class="screen max-w-4xl mx-auto">
+            <div class="content-card">
+                 <h2 class="text-3xl font-bold mb-6 text-center">Meus Exames</h2>
+                 <div class="bg-gray-900/50 p-4 rounded-lg">
+                    <p class="mb-2 font-semibold">Exame de Imagem: Crânio</p>
+                    <p class="text-sm text-gray-400 mb-2">Realizado em: 01/07/2025</p>
+                    <img src="https://placehold.co/600x400/0a2a43/FFF?text=Ressonância+Crânio" alt="Imagem de uma ressonância do crânio" class="rounded-lg mb-4 w-full max-w-md mx-auto">
+                    <button class="text-cyan-300 hover:text-cyan-100 w-full text-center">Consultar laudo médico</button>
+                </div>
+                <button id="exames-back-button" class="main-btn mt-8 w-full max-w-xs mx-auto py-3 block rounded-lg text-lg font-semibold text-center">← Voltar</button>
+            </div>
+        </div>
+
+        <!-- Tela de Consultas (Paciente) -->
+        <div id="consultas-paciente-screen" class="screen max-w-4xl mx-auto">
+            <div class="content-card">
+                <h2 class="text-3xl font-bold mb-6 text-center">Minhas Consultas</h2>
+                <div class="space-y-4">
+                    <div class="bg-gray-900/50 p-4 rounded-lg">
+                        <p class="font-semibold">Clínico Geral - Dr. Paulo Roberto</p>
+                        <p class="text-sm text-gray-400">15/07/2025 - 14:30</p>
+                        <span class="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-green-600 bg-green-200">Confirmada</span>
+                    </div>
+                    <div class="bg-gray-900/50 p-4 rounded-lg">
+                        <p class="font-semibold">Cardiologista - Dra. Ana Lima</p>
+                        <p class="text-sm text-gray-400">22/07/2025 - 10:00</p>
+                        <span class="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-green-600 bg-green-200">Confirmada</span>
+                    </div>
+                </div>
+                <button id="consultas-paciente-back-button" class="main-btn mt-8 w-full max-w-xs mx-auto py-3 block rounded-lg text-lg font-semibold text-center">← Voltar</button>
+            </div>
+        </div>
+        
+        <!-- Tela de Consultas (Profissional) -->
+        <div id="consultas-profissional-screen" class="screen max-w-4xl mx-auto">
+            <div class="content-card">
+                <h2 class="text-3xl font-bold mb-6 text-center">Agenda de Consultas do Dia</h2>
+                <div class="space-y-4">
+                    <div class="bg-gray-900/50 p-4 rounded-lg flex justify-between items-center">
+                        <div>
+                            <p class="font-semibold">Alice Pereira (Paciente #15001)</p>
+                            <p class="text-sm text-gray-400">09:00 - Retorno</p>
+                        </div>
+                        <a href="#" class="text-cyan-400 hover:text-white">Ver Prontuário</a>
+                    </div>
+                    <div class="bg-gray-900/50 p-4 rounded-lg flex justify-between items-center">
+                        <div>
+                            <p class="font-semibold">João da Silva (Paciente #12551)</p>
+                            <p class="text-sm text-gray-400">09:30 - Primeira Consulta</p>
+                        </div>
+                        <a href="#" class="text-cyan-400 hover:text-white">Ver Prontuário</a>
+                    </div>
+                    <div class="bg-gray-900/50 p-4 rounded-lg flex justify-between items-center">
+                        <div>
+                            <p class="font-semibold">Maria Costa (Paciente #18765)</p>
+                            <p class="text-sm text-gray-400">10:00 - Pós-operatório</p>
+                        </div>
+                        <a href="#" class="text-cyan-400 hover:text-white">Ver Prontuário</a>
+                    </div>
+                </div>
+                <button id="consultas-profissional-back-button" class="main-btn mt-8 w-full max-w-xs mx-auto py-3 block rounded-lg text-lg font-semibold text-center">← Voltar</button>
+            </div>
+        </div>
+        
+        <!-- Tela de Agendamentos (Paciente) -->
+        <div id="agendamentos-paciente-screen" class="screen max-w-4xl mx-auto">
+            <div class="content-card">
+                <h2 class="text-3xl font-bold mb-6 text-center">Meus Agendamentos</h2>
+                <div class="flex justify-end mb-4">
+                     <button class="main-btn bg-cyan-500 hover:bg-cyan-600 border-none px-4 py-2 rounded-lg">Novo Agendamento</button>
+                </div>
+                <div class="space-y-4">
+                    <div class="bg-gray-900/50 p-4 rounded-lg flex justify-between items-center">
+                        <div>
+                            <p class="font-semibold">Ressonância Magnética - Crânio</p>
+                            <p class="text-sm text-gray-400">10/08/2025 - 08:00</p>
+                            <span class="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-green-600 bg-green-200">Confirmado</span>
+                        </div>
+                        <a href="#" class="text-cyan-400 hover:text-white">Ver Detalhes</a>
+                    </div>
+                    <div class="bg-gray-900/50 p-4 rounded-lg flex justify-between items-center">
+                        <div>
+                            <p class="font-semibold">Consulta com Cardiologista - Dra. Ana Lima</p>
+                            <p class="text-sm text-gray-400">22/07/2025 - 10:00</p>
+                             <span class="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-green-600 bg-green-200">Confirmado</span>
+                        </div>
+                        <a href="#" class="text-cyan-400 hover:text-white">Ver Detalhes</a>
+                    </div>
+                    <div class="bg-gray-900/50 p-4 rounded-lg flex justify-between items-center">
+                        <div>
+                            <p class="font-semibold">Exame de Sangue - Laboratório Vida</p>
+                            <p class="text-sm text-gray-400">18/07/2025 - 07:30</p>
+                             <span class="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-yellow-400 bg-yellow-200">Pendente de Confirmação</span>
+                        </div>
+                        <a href="#" class="text-cyan-400 hover:text-white">Ver Detalhes</a>
+                    </div>
+                </div>
+                <button id="agendamentos-paciente-back-button" class="main-btn mt-8 w-full max-w-xs mx-auto py-3 block rounded-lg text-lg font-semibold text-center">← Voltar</button>
+            </div>
+        </div>
+        
+        <!-- Tela de Agendamentos (Profissional) -->
+        <div id="agendamentos-profissional-screen" class="screen max-w-6xl mx-auto">
+            <div class="content-card">
+                <h2 class="text-3xl font-bold mb-6 text-center">Gerenciar Agenda</h2>
+                 <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-semibold">Hoje - 01/07/2025</h3>
+                    <div>
+                        <button class="main-btn px-3 py-1 rounded-lg text-sm">Dia</button>
+                        <button class="main-btn px-3 py-1 rounded-lg text-sm bg-cyan-500 border-cyan-400">Semana</button>
+                        <button class="main-btn px-3 py-1 rounded-lg text-sm">Mês</button>
+                    </div>
+                </div>
+                <div class="overflow-x-auto rounded-lg">
+                    <table class="w-full text-left">
+                        <thead class="table-header">
+                            <tr>
+                                <th class="p-3">Horário</th>
+                                <th class="p-3">Status</th>
+                                <th class="p-3">Paciente</th>
+                                <th class="p-3">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="table-row border-b border-gray-800">
+                                <td class="p-3">09:00</td>
+                                <td class="p-3"><span class="text-green-400">Disponível</span></td>
+                                <td class="p-3">-</td>
+                                <td class="p-3"><a href="#" class="text-cyan-400 hover:text-white">Bloquear</a></td>
+                            </tr>
+                            <tr class="table-row border-b border-gray-800">
+                                <td class="p-3">09:30</td>
+                                <td class="p-3"><span class="text-yellow-400">Reservado</span></td>
+                                <td class="p-3">Alice Pereira</td>
+                                <td class="p-3"><a href="#" class="text-cyan-400 hover:text-white">Detalhes</a></td>
+                            </tr>
+                            <tr class="table-row border-b border-gray-800">
+                                <td class="p-3">10:00</td>
+                                <td class="p-3"><span class="text-red-400">Bloqueado</span></td>
+                                <td class="p-3">Pausa para café</td>
+                                <td class="p-3"><a href="#" class="text-cyan-400 hover:text-white">Desbloquear</a></td>
+                            </tr>
+                             <tr class="table-row border-b border-gray-800">
+                                <td class="p-3">10:30</td>
+                                <td class="p-3"><span class="text-green-400">Disponível</span></td>
+                                <td class="p-3">-</td>
+                                <td class="p-3"><a href="#" class="text-cyan-400 hover:text-white">Bloquear</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <button id="agendamentos-profissional-back-button" class="main-btn mt-8 w-full max-w-xs mx-auto py-3 block rounded-lg text-lg font-semibold text-center">← Voltar</button>
+            </div>
+        </div>
+        
+        <!-- Tela de Prontuário (Profissional) -->
+        <div id="prontuario-screen" class="screen max-w-6xl mx-auto">
+            <div class="content-card">
+                <h2 class="text-3xl font-bold mb-6 text-center">Prontuário Eletrônico do Paciente</h2>
+                <div class="flex gap-4 mb-4">
+                    <input type="text" placeholder="Buscar por nome ou ID do paciente..." class="form-input p-2 rounded-lg w-full">
+                    <button class="main-btn bg-cyan-500 hover:bg-cyan-600 border-none px-6 py-2 rounded-lg">Buscar</button>
+                </div>
+                
+                <!-- Conteúdo do Prontuário - Aparece após a busca -->
+                <div id="prontuario-content" class="bg-black/20 p-4 rounded-lg">
+                    <!-- Cabeçalho do Paciente -->
+                    <div class="flex justify-between items-center mb-4 pb-4 border-b border-gray-700">
+                        <div>
+                            <h3 class="text-2xl font-bold">Alice Pereira</h3>
+                            <p class="text-gray-400">ID: #15001 | Idade: 28 anos</p>
+                        </div>
+                        <div>
+                            <p><span class="font-semibold">Convênio:</span> Unimed</p>
+                            <p><span class="font-semibold">Alergias:</span> Nenhuma relatada</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Abas de Navegação -->
+                    <div class="flex border-b border-gray-700 mb-4">
+                        <button class="tab-btn py-2 px-4 text-gray-300 hover:bg-gray-700/50 active" onclick="openTab(event, 'dados-pessoais')">Dados Pessoais</button>
+                        <button class="tab-btn py-2 px-4 text-gray-300 hover:bg-gray-700/50" onclick="openTab(event, 'historico-consultas')">Histórico</button>
+                        <button class="tab-btn py-2 px-4 text-gray-300 hover:bg-gray-700/50" onclick="openTab(event, 'exames-laudos')">Exames</button>
+                        <button class="tab-btn py-2 px-4 text-gray-300 hover:bg-gray-700/50" onclick="openTab(event, 'anotacoes')">Anotações</button>
+                    </div>
+
+                    <!-- Conteúdo das Abas -->
+                    <div id="dados-pessoais" class="tab-content active">
+                        <p><strong>Nome Completo:</strong> Alice Pereira da Silva</p>
+                        <p><strong>Data de Nascimento:</strong> 15/05/1997</p>
+                        <p><strong>Contato de Emergência:</strong> Maria Pereira (Mãe) - (11) 98765-4321</p>
+                    </div>
+                    <div id="historico-consultas" class="tab-content">
+                        <p><strong>15/07/2025:</strong> Consulta com Dr. Paulo Roberto (Clínico Geral)</p>
+                        <p><strong>02/06/2025:</strong> Consulta com Dra. Ana Lima (Cardiologista)</p>
+                    </div>
+                    <div id="exames-laudos" class="tab-content">
+                        <p><strong>01/07/2025:</strong> Ressonância Magnética de Crânio - <a href="#" class="text-cyan-400">Ver Laudo</a></p>
+                    </div>
+                    <div id="anotacoes" class="tab-content">
+                        <textarea class="form-input w-full p-2 rounded-lg" rows="4" placeholder="Adicionar nova anotação..."></textarea>
+                        <button class="main-btn bg-cyan-500 hover:bg-cyan-600 border-none px-4 py-2 rounded-lg mt-2">Salvar Anotação</button>
+                    </div>
+                </div>
+                <button id="prontuario-back-button" class="main-btn mt-8 w-full max-w-xs mx-auto py-3 block rounded-lg text-lg font-semibold text-center">← Voltar</button>
+            </div>
+        </div>
+
+        <!-- Tela de Laudos (Profissional) -->
+        <div id="laudos-screen" class="screen max-w-4xl mx-auto">
+            <div class="content-card">
+                <h2 class="text-3xl font-bold mb-6 text-center">Laudos Pendentes</h2>
+                <div class="space-y-4">
+                    <div class="bg-gray-900/50 p-4 rounded-lg flex justify-between items-center">
+                        <div>
+                            <p class="font-semibold">Ressonância Crânio - Paciente #15001</p>
+                            <p class="text-sm text-gray-400">Recebido em: 01/07/2025</p>
+                        </div>
+                        <button class="main-btn px-4 py-2 rounded-lg">Analisar</button>
+                    </div>
+                </div>
+                <button id="laudos-back-button" class="main-btn mt-8 w-full max-w-xs mx-auto py-3 block rounded-lg text-lg font-semibold text-center">← Voltar</button>
+            </div>
+        </div>
+
+        <!-- Tela de Cirurgias (Profissional) -->
+        <div id="cirurgias-screen" class="screen max-w-4xl mx-auto">
+            <div class="content-card">
+                <h2 class="text-3xl font-bold mb-6 text-center">Cirurgias Agendadas</h2>
+                <div class="space-y-4">
+                    <div class="bg-gray-900/50 p-4 rounded-lg">
+                        <p class="font-semibold">Apendicectomia - Paciente #12551</p>
+                        <p class="text-sm text-gray-400">Sala 3 - 05/07/2025 - 08:00</p>
+                    </div>
+                </div>
+                <button id="cirurgias-back-button" class="main-btn mt-8 w-full max-w-xs mx-auto py-3 block rounded-lg text-lg font-semibold text-center">← Voltar</button>
+            </div>
+        </div>
+
+        <!-- Tela de Vídeo Chamada (Paciente) -->
+        <div id="video-chamada-screen" class="screen max-w-4xl mx-auto">
+            <div class="content-card text-center">
+                <h2 class="text-3xl font-bold mb-4">Teleconsulta</h2>
+                <p class="mb-6 text-gray-300">Sua consulta com Dr. Paulo Roberto está prestes a começar.</p>
+                <button onclick="showScreen('video-call-active-screen', 'dashboard-paciente')" class="main-btn bg-green-500 hover:bg-green-600 border-none px-8 py-3 rounded-lg text-lg">Entrar na Chamada</button>
+                <button id="video-chamada-back-button" class="main-btn mt-8 w-full max-w-xs mx-auto py-3 block rounded-lg text-lg font-semibold text-center">← Voltar</button>
+            </div>
+        </div>
+        
+        <!-- Tela de Chamada de Vídeo Ativa -->
+        <div id="video-call-active-screen" class="screen max-w-5xl mx-auto">
+            <div class="content-card w-full">
+                <div class="relative w-full aspect-video bg-black rounded-lg mb-4">
+                    <!-- Feed de vídeo do médico -->
+                    <img src="https://placehold.co/1280x720/111827/FFF?text=Dr.+Paulo+Roberto" class="w-full h-full object-cover rounded-lg" alt="Imagem do Dr. Paulo Roberto em video chamada">
+                    <!-- Feed de vídeo do paciente (Picture-in-Picture) -->
+                    <div class="absolute bottom-4 right-4 w-1/4 h-1/4 border-2 border-gray-500 rounded-lg overflow-hidden">
+                        <img src="https://placehold.co/400x300/374151/FFF?text=Você" class="w-full h-full object-cover" alt="Sua imagem na video chamada">
+                    </div>
+                </div>
+                <div class="flex justify-center items-center space-x-4">
+                    <!-- Controles da chamada -->
+                    <button class="bg-gray-700 p-3 rounded-full hover:bg-gray-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
+                    </button>
+                    <button onclick="showScreen('post-call-summary-screen', 'video-call-active-screen')" class="bg-red-600 p-4 rounded-full hover:bg-red-700">
+                         <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path></svg>
+                    </button>
+                     <button class="bg-gray-700 p-3 rounded-full hover:bg-gray-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tela de Resumo Pós-Chamada -->
+        <div id="post-call-summary-screen" class="screen max-w-md mx-auto text-center">
+            <div class="content-card">
+                <svg class="w-20 h-20 mx-auto text-cyan-400 mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <h2 class="text-3xl font-bold mb-4">Consulta Finalizada</h2>
+                <p class="text-gray-300 mb-6">Um resumo da sua consulta com Dr. Paulo Roberto:</p>
+                <div class="text-left bg-black/20 p-4 rounded-lg space-y-2">
+                    <p><span class="font-semibold">Receita médica:</span> Enviada para o seu app.</p>
+                    <p><span class="font-semibold">Pedido de exame:</span> Hemograma completo.</p>
+                    <p><span class="font-semibold">Próxima consulta:</span> Retorno em 30 dias.</p>
+                </div>
+                <button onclick="showScreen('dashboard-paciente')" class="main-btn mt-8 w-full py-3 rounded-lg text-lg font-semibold">Voltar ao Início</button>
+            </div>
+        </div>
+
+        <!-- Tela de Receitas (Paciente) -->
+        <div id="receitas-screen" class="screen max-w-4xl mx-auto">
+            <div class="content-card">
+                <h2 class="text-3xl font-bold mb-6 text-center">Minhas Receitas</h2>
+                <div class="bg-gray-900/50 p-4 rounded-lg">
+                    <p class="font-semibold">Amoxicilina 500mg</p>
+                    <p class="text-sm text-gray-400">Emitida em: 15/06/2025 - Validade: 15/07/2025</p>
+                    <button class="text-cyan-300 hover:text-cyan-100 w-full text-left mt-2">Ver detalhes e QR Code</button>
+                </div>
+                <button id="receitas-back-button" class="main-btn mt-8 w-full max-w-xs mx-auto py-3 block rounded-lg text-lg font-semibold text-center">← Voltar</button>
+            </div>
+        </div>
+
+        <!-- Tela de Histórico (Paciente) -->
+        <div id="historico-screen" class="screen max-w-4xl mx-auto">
+            <div class="content-card">
+                <h2 class="text-3xl font-bold mb-6 text-center">Meu Histórico</h2>
+                <div class="border-l-2 border-cyan-500 pl-4 space-y-6">
+                    <div class="relative">
+                        <div class="absolute -left-5 w-4 h-4 bg-cyan-500 rounded-full mt-1.5"></div>
+                        <p class="font-semibold">Consulta Clínico Geral</p>
+                        <p class="text-sm text-gray-400">15/06/2025</p>
+                    </div>
+                    <div class="relative">
+                        <div class="absolute -left-5 w-4 h-4 bg-cyan-500 rounded-full mt-1.5"></div>
+                        <p class="font-semibold">Exame de Sangue</p>
+                        <p class="text-sm text-gray-400">02/06/2025</p>
+                    </div>
+                </div>
+                <button id="historico-back-button" class="main-btn mt-8 w-full max-w-xs mx-auto py-3 block rounded-lg text-lg font-semibold text-center">← Voltar</button>
+            </div>
+        </div>
+
+        <!-- Telas de Admin -->
+        <div id="cadastros-admin-screen" class="screen max-w-6xl mx-auto">
+            <div class="content-card">
+                <h2 class="text-3xl font-bold mb-6 text-center">Gerenciar Cadastros</h2>
+                <div class="flex justify-between items-center mb-4">
+                    <input type="text" placeholder="Buscar por nome ou CPF..." class="form-input p-2 rounded-lg w-1/3">
+                    <button class="main-btn bg-cyan-500 hover:bg-cyan-600 border-none px-4 py-2 rounded-lg">Adicionar Usuário</button>
+                </div>
+                <div class="overflow-x-auto rounded-lg">
+                    <table class="w-full text-left">
+                        <thead class="table-header">
+                            <tr>
+                                <th class="p-3">Nome</th>
+                                <th class="p-3">Perfil</th>
+                                <th class="p-3">Status</th>
+                                <th class="p-3">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="table-row border-b border-gray-800">
+                                <td class="p-3">Dra. Catia Simone</td>
+                                <td class="p-3">Médico</td>
+                                <td class="p-3"><span class="text-green-400">Ativo</span></td>
+                                <td class="p-3"><a href="#" class="text-cyan-400 hover:text-white">Editar</a> | <a href="#" class="text-red-400 hover:text-white">Remover</a></td>
+                            </tr>
+                            <tr class="table-row border-b border-gray-800">
+                                <td class="p-3">Alice Pereira</td>
+                                <td class="p-3">Paciente</td>
+                                <td class="p-3"><span class="text-green-400">Ativo</span></td>
+                                <td class="p-3"><a href="#" class="text-cyan-400 hover:text-white">Editar</a> | <a href="#" class="text-red-400 hover:text-white">Remover</a></td>
+                            </tr>
+                             <tr class="table-row border-b border-gray-800">
+                                <td class="p-3">Dr. Paulo Roberto</td>
+                                <td class="p-3">Médico</td>
+                                <td class="p-3"><span class="text-yellow-400">Inativo</span></td>
+                                <td class="p-3"><a href="#" class="text-cyan-400 hover:text-white">Editar</a> | <a href="#" class="text-red-400 hover:text-white">Remover</a></td>
+                            </tr>
+                            <tr class="table-row border-b border-gray-800">
+                                <td class="p-3">Ricardo Souza</td>
+                                <td class="p-3">Enfermeiro</td>
+                                <td class="p-3"><span class="text-green-400">Ativo</span></td>
+                                <td class="p-3"><a href="#" class="text-cyan-400 hover:text-white">Editar</a> | <a href="#" class="text-red-400 hover:text-white">Remover</a></td>
+                            </tr>
+                            <tr class="table-row border-b border-gray-800">
+                                <td class="p-3">Fernanda Lima</td>
+                                <td class="p-3">Enfermeira</td>
+                                <td class="p-3"><span class="text-green-400">Ativo</span></td>
+                                <td class="p-3"><a href="#" class="text-cyan-400 hover:text-white">Editar</a> | <a href="#" class="text-red-400 hover:text-white">Remover</a></td>
+                            </tr>
+                            <tr class="table-row border-b border-gray-800">
+                                <td class="p-3">Lucas Mendes</td>
+                                <td class="p-3">Técnico</td>
+                                <td class="p-3"><span class="text-green-400">Ativo</span></td>
+                                <td class="p-3"><a href="#" class="text-cyan-400 hover:text-white">Editar</a> | <a href="#" class="text-red-400 hover:text-white">Remover</a></td>
+                            </tr>
+                            <tr class="table-row border-b border-gray-800">
+                                <td class="p-3">Mariana Costa</td>
+                                <td class="p-3">Paciente</td>
+                                <td class="p-3"><span class="text-green-400">Ativo</span></td>
+                                <td class="p-3"><a href="#" class="text-cyan-400 hover:text-white">Editar</a> | <a href="#" class="text-red-400 hover:text-white">Remover</a></td>
+                            </tr>
+                            <tr class="table-row border-b border-gray-800">
+                                <td class="p-3">Jorge Almeida</td>
+                                <td class="p-3">Paciente</td>
+                                <td class="p-3"><span class="text-yellow-400">Inativo</span></td>
+                                <td class="p-3"><a href="#" class="text-cyan-400 hover:text-white">Editar</a> | <a href="#" class="text-red-400 hover:text-white">Remover</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <button id="cadastros-admin-back-button" class="main-btn mt-8 w-full max-w-xs mx-auto py-3 block rounded-lg text-lg font-semibold text-center">← Voltar</button>
+            </div>
+        </div>
+        <div id="relatorios-admin-screen" class="screen max-w-4xl mx-auto">
+            <div class="content-card">
+                <h2 class="text-3xl font-bold mb-6 text-center">Gerar Relatórios</h2>
+                <div class="space-y-4">
+                    <div class="bg-black/25 p-4 rounded-lg">
+                        <h3 class="font-semibold text-lg mb-2">Relatório Financeiro</h3>
+                        <p class="text-sm text-gray-400 mb-3">Gera um balanço detalhado de custos, receitas e faturamento por período.</p>
+                        <div class="flex flex-wrap items-center gap-4">
+                            <select class="form-input p-2 rounded-lg bg-gray-700">
+                                <option>Mensal</option>
+                                <option>Trimestral</option>
+                                <option>Anual</option>
+                            </select>
+                            <input type="date" class="form-input p-2 rounded-lg">
+                            <input type="date" class="form-input p-2 rounded-lg">
+                            <button class="main-btn w-full sm:w-auto bg-cyan-500 hover:bg-cyan-600 border-none p-2 rounded-lg flex-grow">Gerar</button>
+                        </div>
+                    </div>
+                     <div class="bg-black/25 p-4 rounded-lg">
+                        <h3 class="font-semibold text-lg mb-2">Relatório de Ocupação de Leitos</h3>
+                        <p class="text-sm text-gray-400 mb-3">Mostra a taxa de ocupação, tempo médio de permanência e giro de leitos por setor.</p>
+                        <div class="flex flex-wrap items-center gap-4">
+                             <select class="form-input p-2 rounded-lg bg-gray-700">
+                                <option>Todos os Setores</option>
+                                <option>UTI</option>
+                                <option>Enfermaria</option>
+                                <option>Cardiologia</option>
+                            </select>
+                            <input type="date" class="form-input p-2 rounded-lg">
+                            <input type="date" class="form-input p-2 rounded-lg">
+                            <button class="main-btn w-full sm:w-auto bg-cyan-500 hover:bg-cyan-600 border-none p-2 rounded-lg flex-grow">Gerar</button>
+                        </div>
+                    </div>
+                    <div class="bg-black/25 p-4 rounded-lg">
+                        <h3 class="font-semibold text-lg mb-2">Relatório de Desempenho Médico</h3>
+                        <p class="text-sm text-gray-400 mb-3">Analisa o número de atendimentos, procedimentos e tempo médio por médico.</p>
+                        <div class="flex flex-wrap items-center gap-4">
+                             <select class="form-input p-2 rounded-lg bg-gray-700">
+                                <option>Todos os Médicos</option>
+                                <option>Dra. Catia Simone</option>
+                                <option>Dr. Paulo Roberto</option>
+                            </select>
+                            <input type="date" class="form-input p-2 rounded-lg">
+                            <input type="date" class="form-input p-2 rounded-lg">
+                            <button class="main-btn w-full sm:w-auto bg-cyan-500 hover:bg-cyan-600 border-none p-2 rounded-lg flex-grow">Gerar</button>
+                        </div>
+                    </div>
+                    <div class="bg-black/25 p-4 rounded-lg">
+                        <h3 class="font-semibold text-lg mb-2">Relatório de Consumo de Suprimentos</h3>
+                        <p class="text-sm text-gray-400 mb-3">Detalha o uso de materiais e medicamentos por setor ou período.</p>
+                        <div class="flex flex-wrap items-center gap-4">
+                             <select class="form-input p-2 rounded-lg bg-gray-700">
+                                <option>Todas as Categorias</option>
+                                <option>Medicamentos</option>
+                                <option>Materiais Descartáveis</option>
+                                <option>Material de Escritório</option>
+                            </select>
+                            <input type="date" class="form-input p-2 rounded-lg">
+                            <input type="date" class="form-input p-2 rounded-lg">
+                            <button class="main-btn w-full sm:w-auto bg-cyan-500 hover:bg-cyan-600 border-none p-2 rounded-lg flex-grow">Gerar</button>
+                        </div>
+                    </div>
+                </div>
+                <button id="relatorios-admin-back-button" class="main-btn mt-8 w-full max-w-xs mx-auto py-3 block rounded-lg text-lg font-semibold text-center">← Voltar</button>
+            </div>
+        </div>
+        <div id="leitos-admin-screen" class="screen max-w-6xl mx-auto">
+             <div class="content-card">
+                 <h3 class="font-bold mb-6 text-2xl text-center">GERENCIAR LEITOS</h3>
+                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                     <div>
+                         <h4 class="font-semibold mb-3 text-center">Mapa de Leitos</h4>
+                         <div class="grid grid-cols-5 sm:grid-cols-7 gap-2 text-center text-xs font-mono p-4 bg-gray-900/50 rounded-lg">
+                             <div class="bg-green-500 rounded p-2 aspect-square flex items-center justify-center cursor-pointer hover:opacity-80" onclick="showBedDetails('A1', 'Disponível', null)">A1</div>
+                             <div class="bg-red-500 rounded p-2 aspect-square flex items-center justify-center cursor-pointer hover:opacity-80" onclick="showBedDetails('A2', 'Ocupado', 'Alice Pereira')">A2</div>
+                             <div class="bg-yellow-500 rounded p-2 aspect-square flex items-center justify-center cursor-pointer hover:opacity-80" onclick="showBedDetails('A3', 'Higienização', null)">A3</div>
+                             <div class="bg-green-500 rounded p-2 aspect-square flex items-center justify-center cursor-pointer hover:opacity-80" onclick="showBedDetails('A4', 'Disponível', null)">A4</div>
+                             <div class="bg-red-500 rounded p-2 aspect-square flex items-center justify-center cursor-pointer hover:opacity-80" onclick="showBedDetails('A5', 'Ocupado', 'João da Silva')">A5</div>
+                             <div class="bg-green-500 rounded p-2 aspect-square flex items-center justify-center cursor-pointer hover:opacity-80" onclick="showBedDetails('B1', 'Disponível', null)">B1</div>
+                             <div class="bg-green-500 rounded p-2 aspect-square flex items-center justify-center cursor-pointer hover:opacity-80" onclick="showBedDetails('B2', 'Disponível', null)">B2</div>
+                             <div class="bg-red-500 rounded p-2 aspect-square flex items-center justify-center cursor-pointer hover:opacity-80" onclick="showBedDetails('B3', 'Ocupado', 'Mariana Costa')">B3</div>
+                             <div class="bg-green-500 rounded p-2 aspect-square flex items-center justify-center cursor-pointer hover:opacity-80" onclick="showBedDetails('B4', 'Disponível', null)">B4</div>
+                             <div class="bg-green-500 rounded p-2 aspect-square flex items-center justify-center cursor-pointer hover:opacity-80" onclick="showBedDetails('B5', 'Disponível', null)">B5</div>
+                             <div class="bg-yellow-500 rounded p-2 aspect-square flex items-center justify-center cursor-pointer hover:opacity-80" onclick="showBedDetails('C1', 'Higienização', null)">C1</div>
+                             <div class="bg-green-500 rounded p-2 aspect-square flex items-center justify-center cursor-pointer hover:opacity-80" onclick="showBedDetails('C2', 'Disponível', null)">C2</div>
+                             <div class="bg-green-500 rounded p-2 aspect-square flex items-center justify-center cursor-pointer hover:opacity-80" onclick="showBedDetails('C3', 'Disponível', null)">C3</div>
+                             <div class="bg-red-500 rounded p-2 aspect-square flex items-center justify-center cursor-pointer hover:opacity-80" onclick="showBedDetails('C4', 'Ocupado', 'José Pereira')">C4</div>
+                             <div class="bg-green-500 rounded p-2 aspect-square flex items-center justify-center cursor-pointer hover:opacity-80" onclick="showBedDetails('C5', 'Disponível', null)">C5</div>
+                             <div class="bg-green-500 rounded p-2 aspect-square flex items-center justify-center cursor-pointer hover:opacity-80" onclick="showBedDetails('D1', 'Disponível', null)">D1</div>
+                             <div class="bg-red-500 rounded p-2 aspect-square flex items-center justify-center cursor-pointer hover:opacity-80" onclick="showBedDetails('D2', 'Ocupado', 'Carlos Lima')">D2</div>
+                             <div class="bg-green-500 rounded p-2 aspect-square flex items-center justify-center cursor-pointer hover:opacity-80" onclick="showBedDetails('D3', 'Disponível', null)">D3</div>
+                             <div class="bg-yellow-500 rounded p-2 aspect-square flex items-center justify-center cursor-pointer hover:opacity-80" onclick="showBedDetails('D4', 'Higienização', null)">D4</div>
+                             <div class="bg-green-500 rounded p-2 aspect-square flex items-center justify-center cursor-pointer hover:opacity-80" onclick="showBedDetails('D5', 'Disponível', null)">D5</div>
+                             <div class="bg-red-500 rounded p-2 aspect-square flex items-center justify-center cursor-pointer hover:opacity-80" onclick="showBedDetails('E1', 'Ocupado', 'Ana Clara')">E1</div>
+                             <div class="bg-green-500 rounded p-2 aspect-square flex items-center justify-center cursor-pointer hover:opacity-80" onclick="showBedDetails('E2', 'Disponível', null)">E2</div>
+                             <div class="bg-green-500 rounded p-2 aspect-square flex items-center justify-center cursor-pointer hover:opacity-80" onclick="showBedDetails('E3', 'Disponível', null)">E3</div>
+                             <div class="bg-green-500 rounded p-2 aspect-square flex items-center justify-center cursor-pointer hover:opacity-80" onclick="showBedDetails('E4', 'Disponível', null)">E4</div>
+                             <div class="bg-yellow-500 rounded p-2 aspect-square flex items-center justify-center cursor-pointer hover:opacity-80" onclick="showBedDetails('E5', 'Higienização', null)">E5</div>
+                         </div>
+                          <div class="flex justify-center space-x-4 mt-4 text-xs">
+                            <span class="flex items-center"><div class="w-3 h-3 rounded-full bg-green-500 mr-2"></div>Disponível</span>
+                            <span class="flex items-center"><div class="w-3 h-3 rounded-full bg-red-500 mr-2"></div>Ocupado</span>
+                            <span class="flex items-center"><div class="w-3 h-3 rounded-full bg-yellow-500 mr-2"></div>Higienização</span>
+                        </div>
+                     </div>
+                     <div id="bed-details-panel" class="bg-black/25 p-4 rounded-lg">
+                         <h4 class="font-semibold mb-3 text-center">Detalhes do Leito</h4>
+                         <div id="bed-details-content" class="text-center text-gray-400">
+                             <p>Selecione um leito para ver os detalhes.</p>
+                         </div>
+                     </div>
+                 </div>
+                 <button id="leitos-admin-back-button" class="main-btn mt-8 w-full max-w-xs mx-auto py-3 block rounded-lg text-lg font-semibold text-center">← Voltar</button>
+             </div>
+        </div>
+        <div id="atendimentos-admin-screen" class="screen max-w-7xl mx-auto">
+            <div class="content-card">
+                <h2 class="text-3xl font-bold mb-6 text-center">Fluxo de Atendimentos em Tempo Real</h2>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
+                    <!-- Coluna Triagem -->
+                    <div class="bg-black/20 p-3 rounded-lg">
+                        <h3 class="font-bold mb-3 text-center">Triagem</h3>
+                        <div class="space-y-2">
+                            <div class="bg-gray-700 p-2 rounded-lg">
+                                <p class="font-semibold">Maria Costa</p>
+                                <p class="text-xs text-gray-400">Entrada: 16:30</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Coluna Espera -->
+                    <div class="bg-black/20 p-3 rounded-lg">
+                        <h3 class="font-bold mb-3 text-center">Aguardando Atendimento</h3>
+                        <div class="space-y-2">
+                            <div class="bg-red-900/50 p-2 rounded-lg">
+                                <p class="font-semibold">Alice Pereira</p>
+                                <p class="text-xs text-gray-300">Senha C-303 (Urgente)</p>
+                            </div>
+                             <div class="bg-yellow-900/50 p-2 rounded-lg">
+                                <p class="font-semibold">José Pereira</p>
+                                <p class="text-xs text-gray-300">Senha A-112</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Coluna Em Atendimento -->
+                    <div class="bg-black/20 p-3 rounded-lg">
+                        <h3 class="font-bold mb-3 text-center">Em Atendimento</h3>
+                         <div class="space-y-2">
+                            <div class="bg-cyan-900/50 p-2 rounded-lg">
+                                <p class="font-semibold">Ana Lima</p>
+                                <p class="text-xs text-gray-300">Dr. Paulo Roberto</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Coluna Alta -->
+                    <div class="bg-black/20 p-3 rounded-lg">
+                        <h3 class="font-bold mb-3 text-center">Aguardando Alta / Exames</h3>
+                         <div class="space-y-2">
+                            <div class="bg-green-900/50 p-2 rounded-lg">
+                                <p class="font-semibold">Pedro Martins</p>
+                                <p class="text-xs text-gray-300">Aguardando resultado Raio-X</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button id="atendimentos-admin-back-button" class="main-btn mt-8 w-full max-w-xs mx-auto py-3 block rounded-lg text-lg font-semibold text-center">← Voltar</button>
+            </div>
+        </div>
+        <div id="suprimentos-admin-screen" class="screen max-w-6xl mx-auto">
+            <div class="content-card">
+                 <h2 class="text-3xl font-bold mb-6 text-center">Gestão de Suprimentos</h2>
+                 <div class="overflow-x-auto rounded-lg">
+                    <table class="w-full text-left">
+                        <thead class="table-header">
+                            <tr>
+                                <th class="p-3">Item</th>
+                                <th class="p-3">Estoque</th>
+                                <th class="p-3">Status</th>
+                                <th class="p-3">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="table-row border-b border-gray-800">
+                                <td class="p-3">Avental Descartável</td>
+                                <td class="p-3">5.000 un.</td>
+                                <td class="p-3"><span class="text-green-400">OK</span></td>
+                                <td class="p-3"><a href="#" class="text-cyan-400 hover:text-white">Requisitar</a></td>
+                            </tr>
+                            <tr class="table-row border-b border-gray-800">
+                                <td class="p-3">Seringa 5ml</td>
+                                <td class="p-3">850 un.</td>
+                                <td class="p-3"><span class="text-yellow-400">Estoque Baixo</span></td>
+                                <td class="p-3"><a href="#" class="text-cyan-400 hover:text-white">Requisitar</a></td>
+                            </tr>
+                             <tr class="table-row border-b border-gray-800">
+                                <td class="p-3">Amoxicilina 500mg</td>
+                                <td class="p-3">1.200 caixas</td>
+                                 <td class="p-3"><span class="text-green-400">OK</span></td>
+                                <td class="p-3"><a href="#" class="text-cyan-400 hover:text-white">Requisitar</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <button id="suprimentos-admin-back-button" class="main-btn mt-8 w-full max-w-xs mx-auto py-3 block rounded-lg text-lg font-semibold text-center">← Voltar</button>
+            </div>
+        </div>
+        <div id="equipamentos-admin-screen" class="screen max-w-6xl mx-auto">
+            <div class="content-card">
+                <h2 class="text-3xl font-bold mb-6 text-center">Gestão de Equipamentos</h2>
+                 <div class="overflow-x-auto rounded-lg">
+                    <table class="w-full text-left">
+                        <thead class="table-header">
+                            <tr>
+                                <th class="p-3">Equipamento</th>
+                                <th class="p-3">Localização</th>
+                                <th class="p-3">Status</th>
+                                <th class="p-3">Próx. Manutenção</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="table-row border-b border-gray-800">
+                                <td class="p-3">Respirador Mecânico</td>
+                                <td class="p-3">UTI - Leito 5</td>
+                                <td class="p-3"><span class="text-cyan-400">Em Uso</span></td>
+                                <td class="p-3">15/09/2025</td>
+                            </tr>
+                            <tr class="table-row border-b border-gray-800">
+                                <td class="p-3">Aparelho de Raio-X Móvel</td>
+                                <td class="p-3">Ala Sul</td>
+                                <td class="p-3"><span class="text-green-400">Disponível</span></td>
+                                <td class="p-3">20/08/2025</td>
+                            </tr>
+                             <tr class="table-row border-b border-gray-800">
+                                <td class="p-3">Desfibrilador</td>
+                                <td class="p-3">Sala de Emergência</td>
+                                 <td class="p-3"><span class="text-yellow-400">Em Manutenção</span></td>
+                                <td class="p-3">05/07/2025</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <button id="equipamentos-admin-back-button" class="main-btn mt-8 w-full max-w-xs mx-auto py-3 block rounded-lg text-lg font-semibold text-center">← Voltar</button>
+            </div>
+        </div>
+        
+        <!-- Tela de Patrimônio (Admin) -->
+        <div id="patrimonio-admin-screen" class="screen max-w-6xl mx-auto">
+            <div class="content-card">
+                 <h2 class="text-3xl font-bold mb-6 text-center">Gerenciar Patrimônio</h2>
+                 <div class="overflow-x-auto rounded-lg">
+                    <table class="w-full text-left">
+                        <thead class="table-header">
+                            <tr>
+                                <th class="p-3">Equipamento</th>
+                                <th class="p-3">Nº de Série</th>
+                                <th class="p-3">Setor de Destino</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="table-row border-b border-gray-800">
+                                <td class="p-3">Aparelho de Ultrassom</td>
+                                <td class="p-3">SN-US99001</td>
+                                <td class="p-3">Imagem</td>
+                            </tr>
+                             <tr class="table-row border-b border-gray-800">
+                                <td class="p-3">Autoclave</td>
+                                <td class="p-3">SN-AC60708</td>
+                                <td class="p-3">Esterilização</td>
+                            </tr>
+                             <tr class="table-row border-b border-gray-800">
+                                <td class="p-3">Bomba de Infusão</td>
+                                <td class="p-3">SN-BI11223</td>
+                                <td class="p-3">Enfermaria</td>
+                            </tr>
+                             <tr class="table-row border-b border-gray-800">
+                                <td class="p-3">Cama Hospitalar Elétrica</td>
+                                <td class="p-3">SN-CH02030</td>
+                                <td class="p-3">Internação</td>
+                            </tr>
+                            <tr class="table-row border-b border-gray-800">
+                                <td class="p-3">Desfibrilador</td>
+                                <td class="p-3">SN-DF77889</td>
+                                <td class="p-3">Emergência</td>
+                            </tr>
+                             <tr class="table-row border-b border-gray-800">
+                                <td class="p-3">Eletrocardiógrafo</td>
+                                <td class="p-3">SN-ECG44556</td>
+                                <td class="p-3">Cardiologia</td>
+                            </tr>
+                             <tr class="table-row border-b border-gray-800">
+                                <td class="p-3">Foco Cirúrgico</td>
+                                <td class="p-3">SN-FC40506</td>
+                                <td class="p-3">Centro Cirúrgico</td>
+                            </tr>
+                            <tr class="table-row border-b border-gray-800">
+                                <td class="p-3">Monitor Multiparâmetro</td>
+                                <td class="p-3">SN-MP98765</td>
+                                <td class="p-3">UTI</td>
+                            </tr>
+                             <tr class="table-row border-b border-gray-800">
+                                <td class="p-3">Oxímetro de Pulso</td>
+                                <td class="p-3">SN-OP80901</td>
+                                <td class="p-3">Triagem</td>
+                            </tr>
+                            <tr class="table-row border-b border-gray-800">
+                                <td class="p-3">Ventilador Pulmonar</td>
+                                <td class="p-3">SN-VP54321</td>
+                                <td class="p-3">Centro Cirúrgico</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <button id="patrimonio-admin-back-button" class="main-btn mt-8 w-full max-w-xs mx-auto py-3 block rounded-lg text-lg font-semibold text-center">← Voltar</button>
+            </div>
+        </div>
+        
+        <!-- Tela de Faturamento (Admin) -->
+        <div id="faturamento-admin-screen" class="screen max-w-4xl mx-auto">
+            <div class="content-card">
+                <h2 class="text-3xl font-bold mb-6 text-center">Faturamento</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <button onclick="showScreen('convenios-faturamento-screen', 'faturamento-admin-screen')" class="main-btn p-6 rounded-lg text-center text-lg">Convênios</button>
+                    <button onclick="showScreen('particular-faturamento-screen', 'faturamento-admin-screen')" class="main-btn p-6 rounded-lg text-center text-lg">Particular</button>
+                    <button onclick="showScreen('sus-faturamento-screen', 'faturamento-admin-screen')" class="main-btn p-6 rounded-lg text-center text-lg">SUS</button>
+                </div>
+                <button id="faturamento-admin-back-button" class="main-btn mt-8 w-full max-w-xs mx-auto py-3 block rounded-lg text-lg font-semibold text-center">← Voltar</button>
+            </div>
+        </div>
+        
+        <!-- Tela de Faturamento Convênios -->
+        <div id="convenios-faturamento-screen" class="screen max-w-6xl mx-auto">
+            <div class="content-card">
+                <h2 class="text-3xl font-bold mb-6 text-center">Faturamento - Convênios</h2>
+                <div class="overflow-x-auto rounded-lg">
+                    <table class="w-full text-left">
+                        <thead class="table-header">
+                            <tr>
+                                <th class="p-3">Convênio</th>
+                                <th class="p-3">Pacientes Atendidos</th>
+                                <th class="p-3">Valor Faturado</th>
+                                <th class="p-3">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="table-row border-b border-gray-800">
+                                <td class="p-3">Unimed</td>
+                                <td class="p-3">125</td>
+                                <td class="p-3">R$ 87.500,00</td>
+                                <td class="p-3"><span class="text-green-400">Pago</span></td>
+                            </tr>
+                            <tr class="table-row border-b border-gray-800">
+                                <td class="p-3">Bradesco Saúde</td>
+                                <td class="p-3">98</td>
+                                <td class="p-3">R$ 72.300,00</td>
+                                <td class="p-3"><span class="text-yellow-400">Pendente</span></td>
+                            </tr>
+                            <tr class="table-row border-b border-gray-800">
+                                <td class="p-3">Amil</td>
+                                <td class="p-3">150</td>
+                                <td class="p-3">R$ 105.000,00</td>
+                                <td class="p-3"><span class="text-green-400">Pago</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <button id="convenios-faturamento-back-button" class="main-btn mt-8 w-full max-w-xs mx-auto py-3 block rounded-lg text-lg font-semibold text-center">← Voltar</button>
+            </div>
+        </div>
+        
+        <!-- Tela de Faturamento Particular -->
+        <div id="particular-faturamento-screen" class="screen max-w-6xl mx-auto">
+            <div class="content-card">
+                <h2 class="text-3xl font-bold mb-6 text-center">Faturamento - Particular</h2>
+                <div class="overflow-x-auto rounded-lg">
+                    <table class="w-full text-left">
+                        <thead class="table-header">
+                            <tr>
+                                <th class="p-3">Paciente</th>
+                                <th class="p-3">Procedimento</th>
+                                <th class="p-3">Valor</th>
+                                <th class="p-3">Status Pagamento</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="table-row border-b border-gray-800">
+                                <td class="p-3">Jorge Almeida</td>
+                                <td class="p-3">Consulta Ortopédica</td>
+                                <td class="p-3">R$ 350,00</td>
+                                <td class="p-3"><span class="text-green-400">Pago</span></td>
+                            </tr>
+                            <tr class="table-row border-b border-gray-800">
+                                <td class="p-3">Beatriz Costa</td>
+                                <td class="p-3">Sessão de Fisioterapia</td>
+                                <td class="p-3">R$ 150,00</td>
+                                <td class="p-3"><span class="text-red-400">Atrasado</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <button id="particular-faturamento-back-button" class="main-btn mt-8 w-full max-w-xs mx-auto py-3 block rounded-lg text-lg font-semibold text-center">← Voltar</button>
+            </div>
+        </div>
+        
+        <!-- Tela de Faturamento SUS -->
+        <div id="sus-faturamento-screen" class="screen max-w-6xl mx-auto">
+            <div class="content-card">
+                <h2 class="text-3xl font-bold mb-6 text-center">Faturamento - SUS</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 text-center">
+                    <div class="bg-black/25 p-4 rounded-lg">
+                        <h4 class="font-bold text-lg">Guias Enviadas</h4>
+                        <p class="text-3xl font-semibold">1.245</p>
+                    </div>
+                    <div class="bg-black/25 p-4 rounded-lg">
+                        <h4 class="font-bold text-lg">Valor Aprovado</h4>
+                        <p class="text-3xl font-semibold">R$ 450.800,00</p>
+                    </div>
+                    <div class="bg-black/25 p-4 rounded-lg">
+                        <h4 class="font-bold text-lg">Valor Pendente</h4>
+                        <p class="text-3xl font-semibold">R$ 98.200,00</p>
+                    </div>
+                </div>
+                <h3 class="text-xl font-bold mb-4">Lotes Recentes</h3>
+                <div class="overflow-x-auto rounded-lg">
+                    <table class="w-full text-left">
+                        <thead class="table-header">
+                            <tr>
+                                <th class="p-3">Lote</th>
+                                <th class="p-3">Data de Envio</th>
+                                <th class="p-3">Valor</th>
+                                <th class="p-3">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="table-row border-b border-gray-800">
+                                <td class="p-3">LOTE-2025-06-A</td>
+                                <td class="p-3">15/06/2025</td>
+                                <td class="p-3">R$ 210.000,00</td>
+                                <td class="p-3"><span class="text-green-400">Processado</span></td>
+                            </tr>
+                            <tr class="table-row border-b border-gray-800">
+                                <td class="p-3">LOTE-2025-06-B</td>
+                                <td class="p-3">28/06/2025</td>
+                                <td class="p-3">R$ 180.500,00</td>
+                                <td class="p-3"><span class="text-yellow-400">Em Análise</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <button id="sus-faturamento-back-button" class="main-btn mt-8 w-full max-w-xs mx-auto py-3 block rounded-lg text-lg font-semibold text-center">← Voltar</button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- MODAL DE ERRO -->
+    <div id="error-modal" class="modal fixed inset-0 bg-black bg-opacity-70 items-center justify-center">
+        <div class="bg-gray-800 p-8 rounded-lg text-center shadow-2xl">
+            <svg class="w-16 h-16 mx-auto text-red-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <h3 class="text-xl font-bold mb-4">Login ou senha inválidos!</h3>
+            <button onclick="closeModal()" class="main-btn px-8 py-2 rounded-lg font-semibold">Tentar novamente</button>
+        </div>
+    </div>
+
+    <script>
+        let currentUserProfile = '';
+        let screenHistory = ['selection-screen'];
+
+        function showScreen(screenId, fromScreen) {
+            const currentActive = document.querySelector('.screen.active');
+            if (currentActive && currentActive.id !== screenId) {
+                if(screenHistory[screenHistory.length - 1] !== currentActive.id) {
+                   screenHistory.push(currentActive.id);
+                }
+            }
+            if (fromScreen === 'back') {
+                screenHistory.pop();
+                screenId = screenHistory[screenHistory.length - 1];
+            }
+
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            
+            const targetScreen = document.getElementById(screenId);
+            targetScreen.classList.add('active');
+
+            const backButton = targetScreen.querySelector('.main-btn[id$="-back-button"]');
+            if (backButton) {
+                const returnScreen = fromScreen || 'dashboard-admin';
+                backButton.onclick = () => showScreen(returnScreen);
+            }
+        }
+
+        function selectProfile(profile) {
+            currentUserProfile = profile;
+            screenHistory = ['selection-screen']; 
+            showScreen('login-screen');
+            const crmField = document.getElementById('crm-field');
+            crmField.style.display = (profile === 'profissional') ? 'block' : 'none';
+            crmField.required = (profile === 'profissional');
+        }
+
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+
+            if (email === 'medico@vida.plus' && password === 'medico123' && currentUserProfile === 'profissional') {
+                showScreen('dashboard-profissional');
+            } else if (email === 'paciente@vida.plus' && password === 'paciente123' && currentUserProfile === 'paciente') {
+                showScreen('dashboard-paciente');
+            } else if (email === 'admin@vida.plus' && password === 'admin123' && currentUserProfile === 'admin') {
+                showScreen('dashboard-admin');
+            }
+            else {
+                document.getElementById('error-modal').classList.add('active');
+            }
+        });
+
+        document.getElementById('register-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const cpfInput = document.getElementById('cpf-field');
+            const cpf = cpfInput.value.replace(/\D/g, '');
+            if (cpf.length !== 11) {
+                // You can add a custom modal here to show the error
+                console.error("CPF inválido");
+                return;
+            }
+            showScreen('confirmation-screen');
+        });
+
+        function closeModal() {
+            document.getElementById('error-modal').classList.remove('active');
+        }
+        
+        function showBedDetails(bedId, status, patientName) {
+            const detailsContent = document.getElementById('bed-details-content');
+            let statusColor = 'text-gray-400';
+            if (status === 'Disponível') statusColor = 'text-green-400';
+            if (status === 'Ocupado') statusColor = 'text-red-400';
+            if (status === 'Higienização') statusColor = 'text-yellow-400';
+
+            let content = `
+                <h5 class="font-bold text-lg">Leito ${bedId}</h5>
+                <p>Status: <span class="font-semibold ${statusColor}">${status}</span></p>
+            `;
+            if (patientName) {
+                content += `<p>Paciente: <span class="font-semibold">${patientName}</span></p>`;
+            }
+            detailsContent.innerHTML = content;
+        }
+        
+        function openTab(event, tabName) {
+            const tabcontent = document.querySelectorAll("#prontuario-content .tab-content");
+            tabcontent.forEach(tab => tab.classList.remove('active'));
+
+            const tablinks = document.querySelectorAll("#prontuario-content .tab-btn");
+            tablinks.forEach(tab => tab.classList.remove('active'));
+
+            document.getElementById(tabName).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+        
+        const cpfInput = document.getElementById('cpf-field');
+        cpfInput.addEventListener('input', function (e) {
+            let value = e.target.value.replace(/\D/g, '');
+            value = value.replace(/(\d{3})(\d)/, '$1.$2');
+            value = value.replace(/(\d{3})(\d)/, '$1.$2');
+            value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+            e.target.value = value;
+        });
+
+
+        window.onload = () => {
+            showScreen('selection-screen');
+            const firstTabButton = document.querySelector('.tab-btn');
+            if(firstTabButton) {
+                firstTabButton.click();
+            }
+        };
+    </script>
+
+</body>
+</html>
